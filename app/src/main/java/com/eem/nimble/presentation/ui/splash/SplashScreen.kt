@@ -17,7 +17,7 @@ import com.eem.nimble.R
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(navigateLogin: () -> Unit = {}) {
     Box {
         Image(
             modifier = Modifier.fillMaxSize(),
