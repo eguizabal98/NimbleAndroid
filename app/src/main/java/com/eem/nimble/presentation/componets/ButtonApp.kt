@@ -1,5 +1,7 @@
 package com.eem.nimble.presentation.componets
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -12,6 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eem.nimble.R
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
@@ -24,9 +27,11 @@ fun ButtonApp(modifier: Modifier = Modifier, onClick: () -> Unit, text: String) 
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color(0xFF15151A)
-        )
+        ),
+        shape = RoundedCornerShape(10.dp)
     ) {
         Text(
+            modifier = Modifier.padding(vertical = 10.dp),
             text = text,
             style = TextStyle(
                 fontSize = 17.sp,
