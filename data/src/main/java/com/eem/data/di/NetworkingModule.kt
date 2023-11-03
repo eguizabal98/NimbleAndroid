@@ -1,6 +1,7 @@
 package com.eem.data.di
 
 import com.eem.data.network.api.AuthApi
+import com.eem.data.network.api.UserApi
 import com.eem.data.network.buildApi
 import com.eem.data.network.getLoggerInterceptor
 import dagger.Module
@@ -19,5 +20,13 @@ object NetworkingModule {
         buildApi(
             interceptors = listOf(getLoggerInterceptor()),
             api = AuthApi::class.java
+        )
+
+    @Singleton
+    @Provides
+    fun provideUserApi(): UserApi =
+        buildApi(
+            interceptors = listOf(getLoggerInterceptor()),
+            api = UserApi::class.java
         )
 }
