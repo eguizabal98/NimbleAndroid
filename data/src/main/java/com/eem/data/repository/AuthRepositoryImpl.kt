@@ -8,6 +8,7 @@ import com.eem.data.network.model.auth.LoginUserBody
 import com.eem.data.network.model.auth.RegisterUserBody
 import com.eem.data.network.model.auth.UserBody
 import com.eem.data.network.model.auth.UserEmail
+import com.eem.data.room.dao.AccessTokenDao
 import com.eem.domain.model.auth.LoginUser
 import com.eem.domain.model.auth.RegisterUser
 import com.eem.domain.model.base.ResultWrapper
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
+    private val accessTokenDao: AccessTokenDao,
     private val contextProvider: CoroutineContextProvider
 ) : AuthRepository {
 
@@ -59,7 +61,7 @@ class AuthRepositoryImpl @Inject constructor(
         executeApiCall(
             contextProvider = contextProvider,
             call = {
-                authApi.logOut(LogOutBody(""))
+                authApi.logOut(LogOutBody(accessTokenDao.getAll()?.first()?.accessToken))
             },
             resultAction = {
                 true

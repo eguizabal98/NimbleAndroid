@@ -8,7 +8,7 @@ import com.eem.data.room.model.AccessTokenEntity
 @Dao
 interface AccessTokenDao {
     @Query("SELECT * FROM AccessTokenEntity")
-    fun getAll(): List<AccessTokenDao>?
+    fun getAll(): List<AccessTokenEntity>?
 
     @Insert
     fun insertAll(vararg accessTokenEntity: AccessTokenEntity)
