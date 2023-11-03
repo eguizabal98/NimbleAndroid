@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class SurveyDetailsResponse(
 
     @SerializedName("data")
-    var surveyData: SurveyData,
+    var surveyData: SurveyDataDto,
     @SerializedName("included")
     var included: List<Included> = emptyList()
 )

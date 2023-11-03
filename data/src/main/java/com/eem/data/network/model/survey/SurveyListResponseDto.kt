@@ -2,14 +2,14 @@ package com.eem.data.network.model.survey
 
 import com.google.gson.annotations.SerializedName
 
-data class SurveyListResponse(
+data class SurveyListResponseDto(
     @SerializedName("data")
-    val surveyListData: List<SurveyData> = emptyList(),
+    val surveyListData: List<SurveyDataDto>? = emptyList(),
     @SerializedName("meta")
-    val surveyPagedInfo: SurveyPagedInfo
+    val surveyPagedInfo: SurveyPagedInfoDto? = null
 )
 
-data class SurveyPagedInfo(
+data class SurveyPagedInfoDto(
     @SerializedName("page")
     val page: Int? = 0,
     @SerializedName("pages")
@@ -20,35 +20,35 @@ data class SurveyPagedInfo(
     val records: Int? = 0
 )
 
-data class SurveyData(
+data class SurveyDataDto(
     @SerializedName("id")
     val id: String? = "",
     @SerializedName("type")
     val type: String? = "",
     @SerializedName("attributes")
-    val attributes: SurveyAttributes,
+    val attributes: SurveyAttributesDto?,
     @SerializedName("relationships")
-    val relationships: SurveyRelationships
+    val relationships: SurveyRelationshipsDto?
 ) {
     fun toDomain(): com.eem.domain.model.survey.SurveyData =
         com.eem.domain.model.survey.SurveyData(
             id.orEmpty(),
             type.orEmpty(),
             com.eem.domain.model.survey.SurveyAttributes(
-                attributes.title,
-                attributes.description,
-                attributes.emailAboveData,
-                attributes.emailBellowData,
-                attributes.isActive,
-                attributes.imageUrl,
-                attributes.createdAt,
-                attributes.activeAt,
-                attributes.inactiveAt,
-                attributes.surveyType
+                attributes?.title,
+                attributes?.description,
+                attributes?.emailAboveData,
+                attributes?.emailBellowData,
+                attributes?.isActive,
+                attributes?.imageUrl,
+                attributes?.createdAt,
+                attributes?.activeAt,
+                attributes?.inactiveAt,
+                attributes?.surveyType
             ),
             com.eem.domain.model.survey.SurveyRelationships(
                 com.eem.domain.model.survey.SurveyQuestions(
-                    relationships.surveyQuestions.data.map {
+                    relationships?.surveyQuestions?.data?.map {
                         com.eem.domain.model.survey.QuestionData(
                             it.id, it.type
                         )
@@ -58,7 +58,7 @@ data class SurveyData(
         )
 }
 
-data class SurveyAttributes(
+data class SurveyAttributesDto(
     @SerializedName("title")
     val title: String? = "",
     @SerializedName("description")
@@ -81,17 +81,17 @@ data class SurveyAttributes(
     val surveyType: String? = ""
 )
 
-data class SurveyRelationships(
+data class SurveyRelationshipsDto(
     @SerializedName("questions")
-    val surveyQuestions: SurveyQuestions
+    val surveyQuestions: SurveyQuestionsDto
 )
 
-data class SurveyQuestions(
+data class SurveyQuestionsDto(
     @SerializedName("data")
-    val data: List<QuestionData> = emptyList()
+    val data: List<QuestionDataDto> = emptyList()
 )
 
-data class QuestionData(
+data class QuestionDataDto(
     @SerializedName("id")
     val id: String? = "",
     @SerializedName("type")

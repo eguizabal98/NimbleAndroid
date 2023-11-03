@@ -25,16 +25,16 @@ class SurveyPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SurveyData> {
         return try {
             val nextPage = params.key ?: INDEX_ONE // if params.key is null then fallback to page 1
-            val token = accessTokenDao.getAll()?.first()?.accessToken.orEmpty()
-            val response = surveyApi.getSurveyList(token, nextPage, ITEMS_PER_PAGE)
+            val token = accessTokenDao.getAll()?.first()
+            val response = surveyApi.getSurveyList(formatAccessToken(token), nextPage, ITEMS_PER_PAGE)
 
             var data = listOf<SurveyData>()
             var nextKey: Int? = null
 
             response.body()?.let {
-                if ((it.surveyPagedInfo.page ?: 0) <= (it.surveyPagedInfo.pages ?: 0)) {
-                    data = it.surveyListData.map { surveyData -> surveyData.toDomain() }
-                    nextKey = it.surveyPagedInfo.page
+                if ((it.surveyPagedInfo?.page ?: 0) <= (it.surveyPagedInfo?.pages ?: 0)) {
+                    data = it.surveyListData?.map { surveyData -> surveyData.toDomain() } ?: listOf()
+                    nextKey = it.surveyPagedInfo?.page
                 }
             }
 
