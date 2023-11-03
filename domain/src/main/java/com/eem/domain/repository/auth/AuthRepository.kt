@@ -9,4 +9,5 @@ interface AuthRepository {
     suspend fun loginUser(loginUser: LoginUser): ResultWrapper<Boolean>
     suspend fun logOut(): ResultWrapper<Boolean>
     suspend fun forgotPassword(email: String): ResultWrapper<String>
+    suspend fun isUserLogin(): ResultWrapper<Boolean>
 }

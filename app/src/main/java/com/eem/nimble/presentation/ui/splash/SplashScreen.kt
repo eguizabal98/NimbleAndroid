@@ -14,15 +14,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.eem.nimble.R
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navigateLogin: () -> Unit = {}) {
+fun SplashScreen(
+    navigateLogin: () -> Unit = {},
+    navigateToHome: () -> Unit = {},
+    splashViewModel: SplashViewModel = hiltViewModel()
+) {
     LaunchedEffect(key1 = true, block = {
-        delay(500)
-        navigateLogin()
+        delay(250)
+        splashViewModel.isUserLogin()
+    })
+    LaunchedEffect(key1 = true, block = {
+        splashViewModel.baseEvent.collect{event ->
+            when(event) {
+                is SplashViewModel.BaseEvent.OnNavigateToHome -> {
+                    navigateToHome()
+                }
+                is SplashViewModel.BaseEvent.OnNavigateToLogin -> {
+                    navigateLogin()
+                }
+            }
+        }
     })
     Box {
         Image(
