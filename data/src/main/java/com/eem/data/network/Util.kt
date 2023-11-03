@@ -3,6 +3,7 @@ package com.eem.data.network
 import com.eem.data.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -20,4 +21,8 @@ fun <Api> buildApi(
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(api)
+}
+
+fun getLoggerInterceptor() = HttpLoggingInterceptor().apply {
+    level = HttpLoggingInterceptor.Level.BODY
 }
