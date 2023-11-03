@@ -43,6 +43,8 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation("androidx.core:core-ktx:1.9.0")
 
     implementation("com.google.dagger:hilt-android:2.47")
