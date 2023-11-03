@@ -29,7 +29,34 @@ data class SurveyData(
     val attributes: SurveyAttributes,
     @SerializedName("relationships")
     val relationships: SurveyRelationships
-)
+) {
+    fun toDomain(): com.eem.domain.model.survey.SurveyData =
+        com.eem.domain.model.survey.SurveyData(
+            id.orEmpty(),
+            type.orEmpty(),
+            com.eem.domain.model.survey.SurveyAttributes(
+                attributes.title,
+                attributes.description,
+                attributes.emailAboveData,
+                attributes.emailBellowData,
+                attributes.isActive,
+                attributes.imageUrl,
+                attributes.createdAt,
+                attributes.activeAt,
+                attributes.inactiveAt,
+                attributes.surveyType
+            ),
+            com.eem.domain.model.survey.SurveyRelationships(
+                com.eem.domain.model.survey.SurveyQuestions(
+                    relationships.surveyQuestions.data.map {
+                        com.eem.domain.model.survey.QuestionData(
+                            it.id, it.type
+                        )
+                    }
+                )
+            )
+        )
+}
 
 data class SurveyAttributes(
     @SerializedName("title")
