@@ -13,7 +13,7 @@ import retrofit2.Response
 suspend fun <R : Response<T>, T, W> executeApiCall(
     contextProvider: CoroutineContextProvider,
     call: suspend () -> R,
-    resultAction: (T) -> W
+    resultAction: suspend (T) -> W
 ): ResultWrapper<W> {
     val result = withContext(contextProvider.io) {
         call()

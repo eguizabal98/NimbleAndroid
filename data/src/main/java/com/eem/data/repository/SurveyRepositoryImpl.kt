@@ -34,7 +34,7 @@ class SurveyRepositoryImpl @Inject constructor(
 ): SurveyRepository {
 
     override suspend fun getSurveyList(): Flow<PagingData<SurveyData>> = Pager(PagingConfig(ITEMS_PER_PAGE)){
-        SurveyPagingSource(surveyApi, accessTokenDao.getAll()?.first()?.accessToken.orEmpty())
+        SurveyPagingSource(surveyApi, accessTokenDao)
     }.flow
 
     override suspend fun getSurveyDetails(surveyId: String): ResultWrapper<SurveyDetails> =

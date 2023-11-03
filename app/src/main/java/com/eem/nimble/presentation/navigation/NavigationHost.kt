@@ -20,7 +20,10 @@ fun NavApp() {
             )
         }
         composable("login") {
-            LoginScreen()
+            LoginScreen(
+                navigateToHome = { navController.navigate("Home") },
+                navigateToSignUp = { navController.navigate("SignUp") }
+            )
         }
     }
 }
