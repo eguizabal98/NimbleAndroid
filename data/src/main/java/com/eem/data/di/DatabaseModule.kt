@@ -3,6 +3,7 @@ package com.eem.data.di
 import android.content.Context
 import androidx.room.Room
 import com.eem.data.room.NimbleDataBase
+import com.eem.data.room.dao.AccessTokenDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,5 +27,5 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideAccessTokenDao(database: NimbleDataBase) = database.accessTokenDao()
+    fun provideAccessTokenDao(database: NimbleDataBase): AccessTokenDao = database.accessTokenDao()
 }

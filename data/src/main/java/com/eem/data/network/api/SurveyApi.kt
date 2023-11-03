@@ -16,20 +16,20 @@ interface SurveyApi {
 
     @GET("api/v1/surveys")
     fun getSurveyList(
-        @Header("Authorization") authorization: String,
+        @Header("Authorization") authorization: String?,
         @Query("page[number]") page: Int,
         @Query("page[size]") size: Int
     ): Response<SurveyListResponse>
 
     @GET("api/v1/surveys/{surveyId}")
     fun getSurveyDetails(
-        @Header("Authorization") authorization: String,
+        @Header("Authorization") authorization: String?,
         @Path("surveyId") surveyId: String
     ): Response<SurveyDetailsResponse>
 
     @POST("api/v1/responses")
     fun submitSurveyResponse(
-        @Header("Authorization") authorization: String,
+        @Header("Authorization") authorization: String?,
         @Body surveyAnswerBody: SurveyAnswerBody
     ): Response<EmptyResponse>
 }
