@@ -13,6 +13,7 @@ import com.eem.data.room.model.AccessTokenEntity
 import com.eem.domain.model.auth.LoginUser
 import com.eem.domain.model.auth.RegisterUser
 import com.eem.domain.model.base.ResultWrapper
+import com.eem.domain.model.base.Success
 import com.eem.domain.repository.auth.AuthRepository
 import javax.inject.Inject
 
@@ -91,4 +92,7 @@ class AuthRepositoryImpl @Inject constructor(
                 it.meta.message
             }
         )
+
+    override suspend fun isUserLogin(): ResultWrapper<Boolean> =
+         Success(accessTokenDao.getAll().isNullOrEmpty().not())
 }

@@ -8,11 +8,11 @@ import com.eem.data.room.model.AccessTokenEntity
 @Dao
 interface AccessTokenDao {
     @Query("SELECT * FROM AccessTokenEntity")
-    fun getAll(): List<AccessTokenEntity>?
+    suspend fun getAll(): List<AccessTokenEntity>?
 
     @Insert
-    fun insertAll(vararg accessTokenEntity: AccessTokenEntity)
+    suspend fun insertAll(vararg accessTokenEntity: AccessTokenEntity)
 
     @Query("DELETE FROM AccessTokenEntity")
-    fun clear()
+    suspend fun clear()
 }

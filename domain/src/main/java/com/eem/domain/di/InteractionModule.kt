@@ -2,6 +2,8 @@ package com.eem.domain.di
 
 import com.eem.domain.interactor.auth.ForgotPasswordUseCase
 import com.eem.domain.interactor.auth.ForgotPasswordUseCaseImpl
+import com.eem.domain.interactor.auth.IsUserLoginUseCase
+import com.eem.domain.interactor.auth.IsUserLoginUseCaseImpl
 import com.eem.domain.interactor.auth.LogOutUseCase
 import com.eem.domain.interactor.auth.LogOutUseCaseImpl
 import com.eem.domain.interactor.auth.LoginUserUseCase
@@ -43,6 +45,10 @@ object InteractionModule {
     @Provides
     fun provideForgotPasswordUseCase(authRepository: AuthRepository): ForgotPasswordUseCase =
         ForgotPasswordUseCaseImpl(authRepository)
+
+    @Provides
+    fun provideIsUserLoginUseCase(authRepository: AuthRepository): IsUserLoginUseCase =
+        IsUserLoginUseCaseImpl(authRepository)
 
     @Provides
     fun provideGetSurveyDetailsUseCase(surveyRepository: SurveyRepository): GetSurveyDetailsUseCase =
