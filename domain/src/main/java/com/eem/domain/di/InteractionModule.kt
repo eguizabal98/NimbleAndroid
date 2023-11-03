@@ -14,8 +14,11 @@ import com.eem.domain.interactor.survey.GetSurveyListUseCase
 import com.eem.domain.interactor.survey.GetSurveyListUseCaseImpl
 import com.eem.domain.interactor.survey.SubmitSurveyUseCase
 import com.eem.domain.interactor.survey.SubmitSurveyUseCaseImpl
+import com.eem.domain.interactor.user.GetProfileInfoUseCase
+import com.eem.domain.interactor.user.GetProfileInfoUseCaseImpl
 import com.eem.domain.repository.auth.AuthRepository
 import com.eem.domain.repository.survey.SurveyRepository
+import com.eem.domain.repository.user.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,4 +55,8 @@ object InteractionModule {
     @Provides
     fun provideSubmitSurveyUseCase(surveyRepository: SurveyRepository): SubmitSurveyUseCase =
         SubmitSurveyUseCaseImpl(surveyRepository)
+
+    @Provides
+    fun provideGetProfileInfoUseCase(userRepository: UserRepository): GetProfileInfoUseCase =
+        GetProfileInfoUseCaseImpl(userRepository)
 }
