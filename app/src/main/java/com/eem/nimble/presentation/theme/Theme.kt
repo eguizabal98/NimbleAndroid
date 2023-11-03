@@ -1,4 +1,4 @@
-package com.eem.nimble.ui.theme
+package com.eem.nimble.presentation.theme
 
 import android.app.Activity
 import android.os.Build
