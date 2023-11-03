@@ -9,6 +9,7 @@ import com.eem.data.network.model.auth.RegisterUserBody
 import com.eem.data.network.model.auth.UserBody
 import com.eem.data.network.model.auth.UserEmail
 import com.eem.data.room.dao.AccessTokenDao
+import com.eem.data.room.model.AccessTokenEntity
 import com.eem.domain.model.auth.LoginUser
 import com.eem.domain.model.auth.RegisterUser
 import com.eem.domain.model.base.ResultWrapper
@@ -37,6 +38,7 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             },
             resultAction = {
+                accessTokenDao.clear()
                 true
             }
         )
@@ -53,6 +55,15 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             },
             resultAction = {
+                accessTokenDao.insertAll(
+                    AccessTokenEntity(
+                        it.data.attributes.accessToken,
+                        it.data.attributes.tokenType,
+                        it.data.attributes.expiresIn,
+                        it.data.attributes.refreshToken,
+                        it.data.attributes.createdAt
+                    )
+                )
                 true
             }
         )
@@ -64,6 +75,7 @@ class AuthRepositoryImpl @Inject constructor(
                 authApi.logOut(LogOutBody(accessTokenDao.getAll()?.first()?.accessToken))
             },
             resultAction = {
+                accessTokenDao.clear()
                 true
             }
         )
@@ -75,6 +87,7 @@ class AuthRepositoryImpl @Inject constructor(
                 authApi.forgotPassword(ForgotPasswordBody(UserEmail(email)))
             },
             resultAction = {
+                accessTokenDao.clear()
                 it.meta.message
             }
         )
