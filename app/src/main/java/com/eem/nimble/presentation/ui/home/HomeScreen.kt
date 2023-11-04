@@ -5,6 +5,7 @@ package com.eem.nimble.presentation.ui.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,16 +58,19 @@ import com.eem.nimble.presentation.ui.home.HomeViewModel.UIState
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    navigateToSurvey: (String) -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
 
     LaunchedEffect(key1 = true, block = {
         homeViewModel.getSurveyList()
     })
-    HomeScreenContent(homeViewModel.uiState)
+    HomeScreenContent(homeViewModel.uiState, navigateToSurvey)
 }
 
 @Composable
-fun HomeScreenContent(uiState: UIState = UIState()) {
+fun HomeScreenContent(uiState: UIState = UIState(), navigateToSurvey: (String) -> Unit = {}) {
     val surveyList: LazyPagingItems<SurveyData> = uiState.surveyList.collectAsLazyPagingItems()
     val state = rememberLazyListState()
     val currentIndex by remember {
@@ -94,7 +98,13 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
                     items(
                         count = surveyList.itemCount
                     ) { item ->
-                        surveyList[item]?.let { SurveyItem(Modifier.fillParentMaxSize(), it) }
+                        surveyList[item]?.let {
+                            SurveyItem(
+                                Modifier.fillParentMaxSize(),
+                                it,
+                                navigateToSurvey
+                            )
+                        }
                     }
                 }
             }
@@ -117,7 +127,7 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
 }
 
 @Composable
-fun SurveyItem(modifier: Modifier, surveyData: SurveyData) {
+fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (String) -> Unit) {
     Box(modifier = modifier) {
         val brush = Brush.verticalGradient(
             listOf(
@@ -182,10 +192,13 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData) {
                         .size(70.dp)
                         .weight(3f, false)
                         .clip(CircleShape)
-                        .background(color = Color(0xFFFFFFFF)),
+                        .background(color = Color(0xFFFFFFFF))
+                        .clickable {
+                            navigateToSurvey(surveyData.id)
+                        },
                     painter = painterResource(id = R.drawable.baseline_navigate_next_24),
                     contentDescription = "image description",
-                    contentScale = ContentScale.None,
+                    contentScale = ContentScale.None
                 )
             }
         }

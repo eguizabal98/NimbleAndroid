@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.eem.nimble.presentation.ui.SurveyScreen
 import com.eem.nimble.presentation.ui.home.HomeScreen
 import com.eem.nimble.presentation.ui.login.LoginScreen
 import com.eem.nimble.presentation.ui.splash.SplashScreen
@@ -30,7 +31,14 @@ fun NavApp() {
             )
         }
         composable("home") {
-            HomeScreen()
+            HomeScreen(
+                navigateToSurvey = {
+                    navController.navigate("survey")
+                }
+            )
+        }
+        composable("survey") {
+            SurveyScreen()
         }
     }
 }
