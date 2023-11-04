@@ -17,16 +17,24 @@ fun NavApp() {
         composable("splash") {
             SplashScreen(
                 navigateLogin = {
-                    navController.navigate("login")
+                    navController.navigate("login") {
+                        popUpTo("splash") { inclusive = true }
+                    }
                 },
                 navigateToHome = {
-                    navController.navigate("home")
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
                 }
             )
         }
         composable("login") {
             LoginScreen(
-                navigateToHome = { navController.navigate("home") },
+                navigateToHome = {
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                },
                 navigateToSignUp = { navController.navigate("signUp") }
             )
         }
