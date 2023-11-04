@@ -15,10 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import com.eem.nimble.presentation.componets.ButtonApp
 import com.eem.nimble.presentation.componets.LoadingIndicator
 import com.eem.nimble.presentation.componets.TextFieldApp
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
+import com.eem.nimble.presentation.theme.robotoFamily
 import com.eem.nimble.presentation.ui.reset.ResetPasswordViewModel.ResetUIEventActions
 import com.eem.nimble.presentation.ui.reset.ResetPasswordViewModel.UIEvent.OnClearMessage
 import com.eem.nimble.presentation.ui.reset.ResetPasswordViewModel.UIEvent.OnResetClick
@@ -39,7 +41,7 @@ import com.eem.nimble.presentation.ui.reset.ResetPasswordViewModel.UIState
 @Composable
 fun ResetPasswordScreen(
     resetPasswordViewModel: ResetPasswordViewModel = hiltViewModel(),
-    navigateBack: () -> Unit= {}
+    navigateBack: () -> Unit = {}
 ) {
 
     ResetPasswordContent(
@@ -71,11 +73,18 @@ fun ResetPasswordContent(
                 },
                 text = { Text(text = uiState.successMessage) })
         }
-        Column(modifier = Modifier.padding(24.dp)) {
+        Column(
+            modifier = Modifier.padding(
+                top = 45.dp,
+                bottom = 24.dp,
+                start = 24.dp,
+                end = 24.dp
+            )
+        ) {
             Row {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_arrow),
-                    contentDescription = "Background Nimble",
+                    contentDescription = stringResource(R.string.background_nimble),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.clickable {
                         navigateBack()
@@ -90,17 +99,17 @@ fun ResetPasswordContent(
                 Image(
                     modifier = Modifier.padding(top = 50.dp, bottom = 24.dp),
                     painter = painterResource(id = R.drawable.logo_white),
-                    contentDescription = "Background Nimble",
+                    contentDescription = stringResource(R.string.nimble_logo),
                     contentScale = ContentScale.Crop
                 )
                 Text(
                     modifier = Modifier.padding(top = 24.dp, bottom = 90.dp),
-                    text = "Enter your email to receive instructions for resetting your password.",
+                    text = stringResource(R.string.enter_your_email),
                     style = TextStyle(
                         fontSize = 17.sp,
                         lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.neuzeit)),
-                        fontWeight = FontWeight(400),
+                        fontFamily = robotoFamily,
+                        fontWeight = FontWeight.Normal,
                         color = Color(0xFFFFFFFF),
 
                         textAlign = TextAlign.Center,
@@ -111,15 +120,17 @@ fun ResetPasswordContent(
                         .padding(vertical = 10.dp)
                         .fillMaxWidth(),
                     value = uiState.email,
-                    placeholder = "Email",
-                    onTextChange = { resetUIEventActions.userEmailChange(it) }
+                    placeholder = stringResource(R.string.email),
+                    onTextChange = { resetUIEventActions.userEmailChange(it) },
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Email
                 )
 
                 ButtonApp(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 20.dp),
-                    onClick = { resetUIEventActions.resetClick() }, "Reset"
+                    onClick = { resetUIEventActions.resetClick() }, stringResource(R.string.reset)
                 )
             }
         }
