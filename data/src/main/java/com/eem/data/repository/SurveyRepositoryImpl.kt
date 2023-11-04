@@ -42,7 +42,7 @@ class SurveyRepositoryImpl @Inject constructor(
             contextProvider = contextProvider,
             call = {
                 surveyApi.getSurveyDetails(
-                    authorization = accessTokenDao.getAll()?.first()?.accessToken,
+                    authorization = formatAccessToken(accessTokenDao.getAll()?.first()),
                     surveyId
                 )
             },
@@ -52,20 +52,20 @@ class SurveyRepositoryImpl @Inject constructor(
                         it.surveyData.id.orEmpty(),
                         it.surveyData.type.orEmpty(),
                         SurveyAttributes(
-                            it.surveyData.attributes.title.orEmpty(),
-                            it.surveyData.attributes.description.orEmpty(),
-                            it.surveyData.attributes.emailAboveData.orEmpty(),
-                            it.surveyData.attributes.emailBellowData.orEmpty(),
-                            it.surveyData.attributes.isActive.orEmpty(),
-                            it.surveyData.attributes.imageUrl.orEmpty(),
-                            it.surveyData.attributes.createdAt.orEmpty(),
-                            it.surveyData.attributes.activeAt.orEmpty(),
-                            it.surveyData.attributes.inactiveAt.orEmpty(),
-                            it.surveyData.attributes.surveyType.orEmpty()
+                            it.surveyData.attributes?.title.orEmpty(),
+                            it.surveyData.attributes?.description.orEmpty(),
+                            it.surveyData.attributes?.emailAboveData.orEmpty(),
+                            it.surveyData.attributes?.emailBellowData.orEmpty(),
+                            it.surveyData.attributes?.isActive.orEmpty(),
+                            it.surveyData.attributes?.imageUrl.orEmpty(),
+                            it.surveyData.attributes?.createdAt.orEmpty(),
+                            it.surveyData.attributes?.activeAt.orEmpty(),
+                            it.surveyData.attributes?.inactiveAt.orEmpty(),
+                            it.surveyData.attributes?.surveyType.orEmpty()
                         ),
                         SurveyRelationships(
                             SurveyQuestions(
-                                it.surveyData.relationships.surveyQuestions.data.map { questionData ->
+                                it.surveyData.relationships?.surveyQuestions?.data?.map { questionData ->
                                     QuestionData(questionData.id, questionData.type)
                                 }
                             )
@@ -112,7 +112,7 @@ class SurveyRepositoryImpl @Inject constructor(
             contextProvider = contextProvider,
             call = {
                 surveyApi.submitSurveyResponse(
-                    authorization = accessTokenDao.getAll()?.first()?.accessToken,
+                    authorization = formatAccessToken(accessTokenDao.getAll()?.first()),
                     surveyAnswerBody = SurveyAnswerBody(
                         surveyAnswer.surveyId,
                         surveyAnswer.questions.map {

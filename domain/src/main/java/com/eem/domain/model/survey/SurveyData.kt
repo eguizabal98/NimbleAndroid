@@ -3,8 +3,8 @@ package com.eem.domain.model.survey
 data class SurveyData(
     val id: String,
     val type: String,
-    val attributes: SurveyAttributes,
-    val relationships: SurveyRelationships
+    val attributes: SurveyAttributes?,
+    val relationships: SurveyRelationships?
 )
 
 data class SurveyAttributes(
@@ -25,7 +25,7 @@ data class SurveyRelationships(
 )
 
 data class SurveyQuestions(
-    val data: List<QuestionData> = emptyList()
+    val data: List<QuestionData>? = emptyList()
 )
 
 data class QuestionData(

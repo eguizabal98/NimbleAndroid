@@ -2,6 +2,7 @@ package com.eem.data.repository
 
 import com.eem.data.network.model.CoroutineContextProvider
 import com.eem.data.network.model.error.ErrorList
+import com.eem.data.room.model.AccessTokenEntity
 import com.eem.domain.model.base.Failure
 import com.eem.domain.model.base.HttpError
 import com.eem.domain.model.base.ResultWrapper
@@ -29,3 +30,6 @@ suspend fun <R : Response<T>, T, W> executeApiCall(
         Failure(HttpError(errors.errorsList.first().detail, result.code()))
     }
 }
+
+fun formatAccessToken(accessTokenEntity: AccessTokenEntity?) =
+    "${accessTokenEntity?.tokenType} ${accessTokenEntity?.accessToken}"

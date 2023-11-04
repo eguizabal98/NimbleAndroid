@@ -3,7 +3,7 @@ package com.eem.data.network.api
 import com.eem.data.network.model.EmptyResponse
 import com.eem.data.network.model.survey.SurveyAnswerBody
 import com.eem.data.network.model.survey.SurveyDetailsResponse
-import com.eem.data.network.model.survey.SurveyListResponse
+import com.eem.data.network.model.survey.SurveyListResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,20 +15,20 @@ import retrofit2.http.Query
 interface SurveyApi {
 
     @GET("api/v1/surveys")
-    fun getSurveyList(
+    suspend fun getSurveyList(
         @Header("Authorization") authorization: String?,
         @Query("page[number]") page: Int,
         @Query("page[size]") size: Int
-    ): Response<SurveyListResponse>
+    ): Response<SurveyListResponseDto>
 
     @GET("api/v1/surveys/{surveyId}")
-    fun getSurveyDetails(
+    suspend fun getSurveyDetails(
         @Header("Authorization") authorization: String?,
         @Path("surveyId") surveyId: String
     ): Response<SurveyDetailsResponse>
 
     @POST("api/v1/responses")
-    fun submitSurveyResponse(
+    suspend fun submitSurveyResponse(
         @Header("Authorization") authorization: String?,
         @Body surveyAnswerBody: SurveyAnswerBody
     ): Response<EmptyResponse>
