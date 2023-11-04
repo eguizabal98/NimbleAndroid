@@ -17,12 +17,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +62,8 @@ import com.eem.nimble.presentation.componets.PagerIndicator
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
 import com.eem.nimble.presentation.ui.home.HomeViewModel.UIState
 import com.valentinilk.shimmer.shimmer
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
@@ -66,11 +74,24 @@ fun HomeScreen(
     LaunchedEffect(key1 = true, block = {
         homeViewModel.getSurveyList()
     })
-    HomeScreenContent(homeViewModel.uiState, navigateToSurvey)
+    HomeScreenContent(
+        homeViewModel.uiState,
+        { homeViewModel.stopLoading() },
+        navigateToSurvey,
+        homeViewModel.isRefreshing
+    )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreenContent(uiState: UIState = UIState(), navigateToSurvey: (String) -> Unit = {}) {
+fun HomeScreenContent(
+    uiState: UIState = UIState(),
+    stopLoading: () -> Unit = {},
+    navigateToSurvey: (String) -> Unit = {},
+    refreshing: StateFlow<Boolean> = MutableStateFlow(false)
+) {
+    val refreshing by refreshing.collectAsState()
+
     val surveyList: LazyPagingItems<SurveyData> = uiState.surveyList.collectAsLazyPagingItems()
     val state = rememberLazyListState()
     val currentIndex by remember {
@@ -79,51 +100,69 @@ fun HomeScreenContent(uiState: UIState = UIState(), navigateToSurvey: (String) -
         }
     }
     var isLoading by remember { mutableStateOf(false) }
-    Box {
-        when (surveyList.loadState.refresh) {
-            LoadState.Loading -> {
-                isLoading = true
-            }
+    val pullRefreshState = rememberPullRefreshState(refreshing, { surveyList.refresh() })
 
-            is LoadState.Error -> {
-            }
+    LazyColumn(modifier = Modifier.pullRefresh(pullRefreshState), content = {
+        item {
+            Box(
+                Modifier
+                    .fillParentMaxSize()
+            ) {
+                when (surveyList.loadState.refresh) {
+                    LoadState.Loading -> {
+                        isLoading = true
+                    }
 
-            else -> {
-                isLoading = false
-                LazyRow(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
-                ) {
-                    items(
-                        count = surveyList.itemCount
-                    ) { item ->
-                        surveyList[item]?.let {
-                            SurveyItem(
-                                Modifier.fillParentMaxSize(),
-                                it,
-                                navigateToSurvey
-                            )
+                    is LoadState.Error -> {
+                    }
+
+                    else -> {
+                        isLoading = false
+                        stopLoading()
+                        LazyRow(
+                            modifier = Modifier.fillMaxSize(),
+                            state = state,
+                            flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
+                        ) {
+                            items(
+                                count = surveyList.itemCount
+                            ) { item ->
+                                surveyList[item]?.let {
+                                    SurveyItem(
+                                        Modifier.fillParentMaxSize(),
+                                        it,
+                                        navigateToSurvey
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-        if (isLoading.not()) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                UseAppBar()
-            }
-            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
-                PagerIndicator(
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
-                    currentPage = currentIndex,
-                    pageCount = surveyList.itemCount
+                if (isLoading.not()) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        UseAppBar()
+                    }
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        PagerIndicator(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
+                            currentPage = currentIndex,
+                            pageCount = surveyList.itemCount
+                        )
+                    }
+                } else {
+                    LoadingView()
+                }
+                PullRefreshIndicator(
+                    isLoading,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter)
                 )
             }
-        } else {
-            LoadingView()
         }
-    }
+    })
 }
 
 @Composable

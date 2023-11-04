@@ -11,6 +11,9 @@ import com.eem.domain.interactor.survey.GetSurveyListUseCase
 import com.eem.domain.model.survey.SurveyData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +23,10 @@ class HomeViewModel @Inject constructor(
     private val getSurveyListUseCase: GetSurveyListUseCase
 ) : ViewModel() {
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean>
+        get() = _isRefreshing.asStateFlow()
+
     var uiState by mutableStateOf(UIState())
         private set
 
@@ -28,6 +35,12 @@ class HomeViewModel @Inject constructor(
             uiState = uiState.copy(
                 surveyList = getSurveyListUseCase().cachedIn(viewModelScope)
             )
+        }
+    }
+
+    fun stopLoading() {
+        viewModelScope.launch {
+            _isRefreshing.emit(false)
         }
     }
 
