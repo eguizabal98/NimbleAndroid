@@ -20,10 +20,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -60,6 +64,11 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
 fun HomeScreenContent(uiState: UIState = UIState()) {
     val surveyList: LazyPagingItems<SurveyData> = uiState.surveyList.collectAsLazyPagingItems()
     val state = rememberLazyListState()
+    val currentIndex by remember {
+        derivedStateOf {
+            state.layoutInfo.visibleItemsInfo.firstOrNull()?.index ?: 0
+        }
+    }
     Box {
         when (surveyList.loadState.refresh) {
             LoadState.Loading -> {
@@ -88,7 +97,7 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
             PagerIndicator(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
-                currentPage = state.layoutInfo.visibleItemsInfo.firstOrNull()?.index ?: 0,
+                currentPage = currentIndex,
                 pageCount = surveyList.itemCount
             )
         }
@@ -98,6 +107,12 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
 @Composable
 fun SurveyItem(modifier: Modifier, surveyData: SurveyData) {
     Box(modifier = modifier) {
+        val brush = Brush.verticalGradient(
+            listOf(
+                Color(0x1A000000),
+                Color(0xB3000000)
+            )
+        )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(surveyData.attributes?.imageUrl)
@@ -108,6 +123,11 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData) {
             modifier = Modifier
                 .fillMaxSize()
                 .blur(1.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(brush)
         )
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
             Row(
