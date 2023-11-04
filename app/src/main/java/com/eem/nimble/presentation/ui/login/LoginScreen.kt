@@ -1,6 +1,7 @@
 package com.eem.nimble.presentation.ui.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ import com.eem.nimble.presentation.ui.login.LoginViewModel.UIState
 fun LoginScreen(
     navigateToHome: () -> Unit,
     navigateToSignUp: () -> Unit,
+    navigateToReset: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true, block = {
@@ -54,7 +56,8 @@ fun LoginScreen(
             signUpClick = { navigateToSignUp() },
             loginClick = { loginViewModel.onUIEvent(OnLoginClick) },
             userEmailChange = { loginViewModel.onUIEvent(OnUserEmailChange(it)) },
-            userPasswordChange = { loginViewModel.onUIEvent(OnUserPasswordChange(it)) }
+            userPasswordChange = { loginViewModel.onUIEvent(OnUserPasswordChange(it)) },
+            forgotPasswordClick = { navigateToReset() }
         )
     )
 }
@@ -100,7 +103,10 @@ fun LoginScreenContent(
                             fontFamily = FontFamily(Font(R.font.neuzeit)),
                             fontWeight = FontWeight.Normal,
                             color = Color(0x80FFFFFF),
-                        )
+                        ),
+                        modifier = Modifier.clickable {
+                            loginUIEventActions.forgotPasswordClick()
+                        }
                     )
                 }
             )

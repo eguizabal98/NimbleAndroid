@@ -74,7 +74,8 @@ class LoginViewModel @Inject constructor(
         val signUpClick: () -> Unit = {},
         val loginClick: () -> Unit = {},
         val userEmailChange: (String) -> Unit = {},
-        val userPasswordChange: (String) -> Unit = {}
+        val userPasswordChange: (String) -> Unit = {},
+        val forgotPasswordClick: () -> Unit = {}
     )
 
     sealed class BaseEvent {
