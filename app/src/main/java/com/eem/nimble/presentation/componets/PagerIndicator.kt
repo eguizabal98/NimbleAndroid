@@ -1,28 +1,17 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.eem.nimble.presentation.componets
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -31,19 +20,18 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 
 @Composable
 fun PagerIndicator(
     modifier: Modifier = Modifier,
-    pagerState: PagerState,
+    currentPage: Int,
+    pageCount: Int,
     indicatorCount: Int = 5,
-    indicatorSize: Dp = 16.dp,
+    indicatorSize: Dp = 12.dp,
     indicatorShape: Shape = CircleShape,
     space: Dp = 8.dp,
-    activeColor: Color = Color(0xffEC407A),
-    inActiveColor: Color = Color.LightGray,
-    onClick: ((Int) -> Unit)? = null
+    activeColor: Color = Color(0xFFFFFFFF),
+    inActiveColor: Color = Color(0x33FFFFFF)
 ) {
 
     val listState = rememberLazyListState()
@@ -51,18 +39,10 @@ fun PagerIndicator(
     val totalWidth: Dp = indicatorSize * indicatorCount + space * (indicatorCount - 1)
     val widthInPx = LocalDensity.current.run { indicatorSize.toPx() }
 
-    val currentItem by remember {
-        derivedStateOf {
-            pagerState.currentPage
-        }
-    }
-
-    val itemCount = pagerState.pageCount
-
-    LaunchedEffect(key1 = currentItem) {
+    LaunchedEffect(key1 = currentPage) {
         val viewportSize = listState.layoutInfo.viewportSize
         listState.animateScrollToItem(
-            currentItem,
+            currentPage,
             (widthInPx / 2 - viewportSize.width / 2).toInt()
         )
     }
@@ -76,33 +56,24 @@ fun PagerIndicator(
         userScrollEnabled = false
     ) {
 
-        items(itemCount) { index ->
+        items(pageCount) { index ->
 
-            val isSelected = (index == currentItem)
+            val isSelected = (index == currentPage)
 
-            // Index of item in center when odd number of indicators are set
-            // for 5 indicators this is 2nd indicator place
             val centerItemIndex = indicatorCount / 2
 
-            val right1 =
-                (currentItem < centerItemIndex &&
-                        index >= indicatorCount - 1)
+            val right1 = (currentPage < centerItemIndex && index >= indicatorCount - 1)
 
             val right2 =
-                (currentItem >= centerItemIndex &&
-                        index >= currentItem + centerItemIndex &&
-                        index <= itemCount - centerItemIndex + 1)
+                (currentPage >= centerItemIndex &&
+                        index >= currentPage + centerItemIndex &&
+                        index <= pageCount - centerItemIndex + 1)
             val isRightEdgeItem = right1 || right2
 
-            // Check if this item's distance to center item is smaller than half size of
-            // the indicator count when current indicator at the center or
-            // when we reach the end of list. End of the list only one item is on edge
-            // with 10 items and 7 indicators
-            // 7-3= 4th item can be the first valid left edge item and
             val isLeftEdgeItem =
-                index <= currentItem - centerItemIndex &&
-                        currentItem > centerItemIndex &&
-                        index < itemCount - indicatorCount + 1
+                index <= currentPage - centerItemIndex &&
+                        currentPage > centerItemIndex &&
+                        index < pageCount - indicatorCount + 1
 
             Box(
                 modifier = Modifier
@@ -124,14 +95,6 @@ fun PagerIndicator(
                     .background(
                         if (isSelected) activeColor else inActiveColor,
                         indicatorShape
-                    )
-                    .then(
-                        if (onClick != null) {
-                            Modifier
-                                .clickable {
-                                    onClick.invoke(index)
-                                }
-                        } else Modifier
                     )
             )
         }

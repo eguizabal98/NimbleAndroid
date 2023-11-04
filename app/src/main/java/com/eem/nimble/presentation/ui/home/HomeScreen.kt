@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.eem.domain.model.survey.SurveyData
 import com.eem.nimble.R
+import com.eem.nimble.presentation.componets.PagerIndicator
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
 import com.eem.nimble.presentation.ui.home.HomeViewModel.UIState
 
@@ -83,6 +84,13 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
         }
         Column(modifier = Modifier.fillMaxSize()) {
             UseAppBar()
+        }
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+            PagerIndicator(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
+                currentPage = state.layoutInfo.visibleItemsInfo.firstOrNull()?.index ?: 0,
+                pageCount = surveyList.itemCount
+            )
         }
     }
 }
