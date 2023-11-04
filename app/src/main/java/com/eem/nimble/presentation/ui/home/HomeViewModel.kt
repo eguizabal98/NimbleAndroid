@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.eem.domain.interactor.auth.LogOutUseCase
 import com.eem.domain.interactor.survey.GetSurveyListUseCase
+import com.eem.domain.model.base.onSuccess
 import com.eem.domain.model.survey.SurveyData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getSurveyListUseCase: GetSurveyListUseCase
+    private val getSurveyListUseCase: GetSurveyListUseCase,
+    private val logOutUseCase: LogOutUseCase
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -29,6 +32,14 @@ class HomeViewModel @Inject constructor(
 
     var uiState by mutableStateOf(UIState())
         private set
+
+    fun logOut(logOutAction: () -> Unit) {
+        viewModelScope.launch {
+            logOutUseCase().onSuccess {
+                logOutAction()
+            }
+        }
+    }
 
     suspend fun getSurveyList() {
         viewModelScope.launch {

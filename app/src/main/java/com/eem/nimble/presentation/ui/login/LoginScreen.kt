@@ -14,10 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +29,7 @@ import com.eem.nimble.presentation.componets.ButtonApp
 import com.eem.nimble.presentation.componets.LoadingIndicator
 import com.eem.nimble.presentation.componets.TextFieldApp
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
+import com.eem.nimble.presentation.theme.robotoFamily
 import com.eem.nimble.presentation.ui.login.LoginViewModel.LoginUIEventActions
 import com.eem.nimble.presentation.ui.login.LoginViewModel.UIEvent.OnLoginClick
 import com.eem.nimble.presentation.ui.login.LoginViewModel.UIEvent.OnUserEmailChange
@@ -75,7 +77,7 @@ fun LoginScreenContent(
             Image(
                 modifier = Modifier.padding(vertical = 100.dp),
                 painter = painterResource(id = R.drawable.logo_white),
-                contentDescription = "Background Nimble",
+                contentDescription = stringResource(R.string.background_nimble),
                 contentScale = ContentScale.Crop
             )
             TextFieldApp(
@@ -83,24 +85,26 @@ fun LoginScreenContent(
                     .padding(vertical = 10.dp, horizontal = 24.dp)
                     .fillMaxWidth(),
                 value = uiState.email,
-                placeholder = "Email",
-                onTextChange = { loginUIEventActions.userEmailChange(it) }
+                placeholder = stringResource(R.string.email),
+                onTextChange = { loginUIEventActions.userEmailChange(it) },
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Email
             )
             TextFieldApp(
                 modifier = Modifier
                     .padding(vertical = 10.dp, horizontal = 24.dp)
                     .fillMaxWidth(),
                 value = uiState.password,
-                placeholder = "Password",
+                placeholder = stringResource(R.string.password),
                 isPassword = true,
                 onTextChange = { loginUIEventActions.userPasswordChange(it) },
                 endComposable = {
                     Text(
-                        text = "Forgot?",
+                        text = stringResource(R.string.forgot),
                         style = TextStyle(
                             fontSize = 17.sp,
                             lineHeight = 22.sp,
-                            fontFamily = FontFamily(Font(R.font.neuzeit)),
+                            fontFamily = robotoFamily,
                             fontWeight = FontWeight.Normal,
                             color = Color(0x80FFFFFF),
                         ),
@@ -108,7 +112,8 @@ fun LoginScreenContent(
                             loginUIEventActions.forgotPasswordClick()
                         }
                     )
-                }
+                },
+                imeAction = ImeAction.Done
             )
 
             Text(
@@ -116,7 +121,7 @@ fun LoginScreenContent(
                 style = TextStyle(
                     fontSize = 17.sp,
                     lineHeight = 22.sp,
-                    fontFamily = FontFamily(Font(R.font.neuzeit)),
+                    fontFamily = robotoFamily,
                     fontWeight = FontWeight.Normal,
                     color = Color(0xFFFFFFFF),
                 )
@@ -126,7 +131,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 20.dp),
-                onClick = { loginUIEventActions.loginClick() }, "Log In"
+                onClick = { loginUIEventActions.loginClick() }, stringResource(R.string.log_in)
             )
         }
         LoadingIndicator(uiState.loading)
