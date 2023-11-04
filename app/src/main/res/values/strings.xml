@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">NimbleAndroid</string>
+    <string name="background_nimble">Background Nimble</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot">Forgot?</string>
+    <string name="log_in">Log In</string>
+    <string name="nimble_logo">Nimble logo</string>
+    <string name="enter_your_email">Enter your email to receive instructions for resetting your password.</string>
+    <string name="reset">Reset</string>
+    <string name="survey_background">Survey Background</string>
+    <string name="see_survey">See Survey</string>
+    <string name="monday_june_15">Monday, June 15</string>
+    <string name="today">Today</string>
 </resources>

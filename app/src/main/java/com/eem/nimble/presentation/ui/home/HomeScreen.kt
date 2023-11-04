@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 
 package com.eem.nimble.presentation.ui.home
 
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +26,13 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +40,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +51,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,26 +67,98 @@ import com.eem.domain.model.survey.SurveyData
 import com.eem.nimble.R
 import com.eem.nimble.presentation.componets.PagerIndicator
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
+import com.eem.nimble.presentation.theme.robotoFamily
 import com.eem.nimble.presentation.ui.home.HomeViewModel.UIState
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     navigateToSurvey: (String) -> Unit,
+    logOutNavigation: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(key1 = true, block = {
         homeViewModel.getSurveyList()
     })
-    HomeScreenContent(
-        homeViewModel.uiState,
-        { homeViewModel.stopLoading() },
-        navigateToSurvey,
-        homeViewModel.isRefreshing
-    )
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = Color(0xFF1E1E1E),
+                modifier = Modifier.requiredWidth(250.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 25.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Mai",
+                        modifier = Modifier.padding(16.dp),
+                        style = TextStyle(
+                            fontSize = 34.sp,
+                            lineHeight = 41.sp,
+                            fontFamily = robotoFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
+                    )
+                    Image(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(5.dp),
+                        painter = painterResource(id = R.drawable.oval),
+                        contentDescription = stringResource(R.string.background_nimble),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                Divider()
+
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clickable {
+                            homeViewModel.logOut {
+                                logOutNavigation()
+                            }
+                        },
+                    text = "Log Out",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        lineHeight = 25.sp,
+                        fontFamily = robotoFamily,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xBFFFFFFF),
+                        letterSpacing = 0.38.sp
+                    )
+                )
+            }
+        }
+    ) {
+        HomeScreenContent(
+            homeViewModel.uiState,
+            { homeViewModel.stopLoading() },
+            navigateToSurvey,
+            homeViewModel.isRefreshing,
+            {
+                scope.launch {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
+                    }
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -88,7 +167,8 @@ fun HomeScreenContent(
     uiState: UIState = UIState(),
     stopLoading: () -> Unit = {},
     navigateToSurvey: (String) -> Unit = {},
-    refreshing: StateFlow<Boolean> = MutableStateFlow(false)
+    refreshing: StateFlow<Boolean> = MutableStateFlow(false),
+    openDrawer: () -> Unit = {}
 ) {
     val refreshing by refreshing.collectAsState()
 
@@ -140,7 +220,7 @@ fun HomeScreenContent(
                 }
                 if (isLoading.not()) {
                     Column(modifier = Modifier.fillMaxSize()) {
-                        UseAppBar()
+                        UseAppBar(openDrawer)
                     }
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -179,7 +259,7 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
                 .data(surveyData.attributes?.imageUrl)
                 .crossfade(true)
                 .build(),
-            contentDescription = "Survey Background",
+            contentDescription = stringResource(R.string.survey_background),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
@@ -208,7 +288,7 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
                         style = TextStyle(
                             fontSize = 28.sp,
                             lineHeight = 34.sp,
-                            fontFamily = FontFamily(Font(R.font.neuzeit)),
+                            fontFamily = robotoFamily,
                             fontWeight = FontWeight(800),
                             color = Color.White
                         )
@@ -219,7 +299,7 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
                         style = TextStyle(
                             fontSize = 17.sp,
                             lineHeight = 22.sp,
-                            fontFamily = FontFamily(Font(R.font.neuzeit)),
+                            fontFamily = robotoFamily,
                             fontWeight = FontWeight(400),
                             color = Color(0x80FFFFFF),
                         )
@@ -236,7 +316,7 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
                             navigateToSurvey(surveyData.id)
                         },
                     painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                    contentDescription = "image description",
+                    contentDescription = stringResource(R.string.see_survey),
                     contentScale = ContentScale.None
                 )
             }
@@ -245,32 +325,32 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
 }
 
 @Composable
-fun UseAppBar() {
+fun UseAppBar(openDrawer: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(top = 45.dp, bottom = 20.dp, start = 20.dp, end = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Monday, June 15",
+                text = stringResource(R.string.monday_june_15),
                 style = TextStyle(
                     fontSize = 13.sp,
                     lineHeight = 18.sp,
-                    fontFamily = FontFamily(Font(R.font.neuzeit)),
+                    fontFamily = robotoFamily,
                     fontWeight = FontWeight(800),
                     color = Color.White
                 )
             )
             Text(
-                text = "Today",
+                text = stringResource(R.string.today),
                 style = TextStyle(
                     fontSize = 34.sp,
                     lineHeight = 41.sp,
-                    fontFamily = FontFamily(Font(R.font.neuzeit)),
+                    fontFamily = robotoFamily,
                     fontWeight = FontWeight(800),
                     color = Color.White
                 )
@@ -282,9 +362,11 @@ fun UseAppBar() {
             verticalAlignment = Alignment.Bottom
         ) {
             Image(
-                modifier = Modifier.size(36.dp),
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = "Background Nimble",
+                modifier = Modifier
+                    .size(36.dp)
+                    .clickable { openDrawer() },
+                painter = painterResource(id = R.drawable.oval),
+                contentDescription = stringResource(R.string.background_nimble),
                 contentScale = ContentScale.Crop
             )
         }
@@ -301,7 +383,7 @@ fun LoadingView() {
         Row(
             modifier = Modifier
                 .weight(1f)
-                .padding(20.dp)
+                .padding(top = 45.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(

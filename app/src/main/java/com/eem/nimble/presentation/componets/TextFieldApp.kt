@@ -19,17 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.eem.nimble.R
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
+import com.eem.nimble.presentation.theme.robotoFamily
 
 @Composable
 fun TextFieldApp(
@@ -38,7 +37,9 @@ fun TextFieldApp(
     placeholder: String,
     isPassword: Boolean = false,
     onTextChange: (String) -> Unit,
-    endComposable: @Composable () -> Unit = {}
+    endComposable: @Composable () -> Unit = {},
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Default
 ) {
     Box(modifier = modifier) {
         OutlinedTextField(
@@ -51,7 +52,8 @@ fun TextFieldApp(
                 fontSize = 17.sp,
                 lineHeight = 22.sp,
                 color = Color.White,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
+                fontFamily = robotoFamily
             ),
             onValueChange = { onTextChange(it) },
             placeholder = {
@@ -60,14 +62,17 @@ fun TextFieldApp(
                     style = TextStyle(
                         fontSize = 17.sp,
                         lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.neuzeit)),
+                        fontFamily = robotoFamily,
                         fontWeight = FontWeight.Normal,
                         color = Color(0x80FFFFFF),
                     )
                 )
             },
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-            keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default
+            keyboardOptions = if (isPassword) KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction
+            ) else KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         )
         Row(
             modifier = Modifier

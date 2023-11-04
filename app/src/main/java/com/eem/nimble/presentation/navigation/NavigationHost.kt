@@ -49,6 +49,11 @@ fun NavApp() {
             HomeScreen(
                 navigateToSurvey = {
                     navController.navigate("survey")
+                },
+                logOutNavigation = {
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             )
         }
