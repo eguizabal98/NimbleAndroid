@@ -1,4 +1,4 @@
-package com.eem.nimble.ui.theme
+package com.eem.nimble.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
