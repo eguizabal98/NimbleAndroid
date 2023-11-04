@@ -274,7 +274,7 @@ fun SurveyItem(modifier: Modifier, surveyData: SurveyData, navigateToSurvey: (St
             Row(
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 40.dp)
+                    .padding(horizontal = 20.dp, vertical = 50.dp)
                     .fillMaxWidth()
             ) {
                 Column(
@@ -418,7 +418,7 @@ fun LoadingView() {
         Column(
             Modifier
                 .weight(1f)
-                .padding(20.dp), verticalArrangement = Arrangement.Bottom
+                .padding(bottom = 50.dp, start = 20.dp, end = 20.dp), verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 modifier = Modifier

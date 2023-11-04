@@ -71,7 +71,6 @@ class LoginViewModel @Inject constructor(
     )
 
     data class LoginUIEventActions(
-        val signUpClick: () -> Unit = {},
         val loginClick: () -> Unit = {},
         val userEmailChange: (String) -> Unit = {},
         val userPasswordChange: (String) -> Unit = {},

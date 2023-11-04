@@ -33,10 +33,9 @@ fun NavApp() {
             LoginScreen(
                 navigateToHome = {
                     navController.navigate("home") {
-                        popUpTo("splash") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
                     }
                 },
-                navigateToSignUp = { navController.navigate("signUp") },
                 navigateToReset = { navController.navigate("reset") }
             )
         }
@@ -52,7 +51,7 @@ fun NavApp() {
                 },
                 logOutNavigation = {
                     navController.navigate("login") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo("home") { inclusive = true }
                     }
                 }
             )
