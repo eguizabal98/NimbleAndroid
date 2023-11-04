@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -50,6 +54,7 @@ import com.eem.nimble.R
 import com.eem.nimble.presentation.componets.PagerIndicator
 import com.eem.nimble.presentation.theme.NimbleAndroidTheme
 import com.eem.nimble.presentation.ui.home.HomeViewModel.UIState
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
@@ -69,15 +74,18 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
             state.layoutInfo.visibleItemsInfo.firstOrNull()?.index ?: 0
         }
     }
+    var isLoading by remember { mutableStateOf(false) }
     Box {
         when (surveyList.loadState.refresh) {
             LoadState.Loading -> {
+                isLoading = true
             }
 
             is LoadState.Error -> {
             }
 
             else -> {
+                isLoading = false
                 LazyRow(
                     modifier = Modifier.fillMaxSize(),
                     state = state,
@@ -91,15 +99,19 @@ fun HomeScreenContent(uiState: UIState = UIState()) {
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxSize()) {
-            UseAppBar()
-        }
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
-            PagerIndicator(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
-                currentPage = currentIndex,
-                pageCount = surveyList.itemCount
-            )
+        if (isLoading.not()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                UseAppBar()
+            }
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+                PagerIndicator(
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 150.dp),
+                    currentPage = currentIndex,
+                    pageCount = surveyList.itemCount
+                )
+            }
+        } else {
+            LoadingView()
         }
     }
 }
@@ -222,6 +234,102 @@ fun UseAppBar() {
                 painter = painterResource(id = R.drawable.baseline_account_circle_24),
                 contentDescription = "Background Nimble",
                 contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .padding(20.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 5.dp)
+                        .width(175.dp)
+                        .height(25.dp)
+                        .shimmer()
+                        .background(Color.White, CircleShape),
+                    text = ""
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 5.dp)
+                        .width(100.dp)
+                        .height(25.dp)
+                        .shimmer()
+                        .background(Color.White, CircleShape),
+                    text = ""
+                )
+            }
+            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+                Text(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .shimmer()
+                        .background(Color.White, CircleShape),
+                    text = ""
+                )
+            }
+        }
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(20.dp), verticalArrangement = Arrangement.Bottom
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .width(50.dp)
+                    .height(25.dp)
+                    .shimmer()
+                    .background(Color.White, CircleShape),
+                text = ""
+            )
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .width(150.dp)
+                    .height(25.dp)
+                    .shimmer()
+                    .background(Color.White, CircleShape),
+                text = ""
+            )
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .width(75.dp)
+                    .height(25.dp)
+                    .shimmer()
+                    .background(Color.White, CircleShape),
+                text = ""
+            )
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .width(300.dp)
+                    .height(25.dp)
+                    .shimmer()
+                    .background(Color.White, CircleShape),
+                text = ""
+            )
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .width(100.dp)
+                    .height(25.dp)
+                    .shimmer()
+                    .background(Color.White, CircleShape),
+                text = ""
             )
         }
     }
