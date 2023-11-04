@@ -39,7 +39,6 @@ import com.eem.nimble.presentation.ui.login.LoginViewModel.UIState
 @Composable
 fun LoginScreen(
     navigateToHome: () -> Unit,
-    navigateToSignUp: () -> Unit,
     navigateToReset: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -55,7 +54,6 @@ fun LoginScreen(
     LoginScreenContent(
         loginViewModel.uiState,
         LoginUIEventActions(
-            signUpClick = { navigateToSignUp() },
             loginClick = { loginViewModel.onUIEvent(OnLoginClick) },
             userEmailChange = { loginViewModel.onUIEvent(OnUserEmailChange(it)) },
             userPasswordChange = { loginViewModel.onUIEvent(OnUserPasswordChange(it)) },
